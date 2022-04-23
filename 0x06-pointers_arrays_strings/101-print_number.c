@@ -3,8 +3,9 @@
 /**
  * print_number - prints an integer.
  * @n: input integer.
- * Return: no return.
+ * Return: Always 0.
  */
+
 void print_number(int n)
 {
 unsigned int m, d, count;
