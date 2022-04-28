@@ -1,19 +1,17 @@
 #include "main.h"
-
 /**
- *_strlen_recursion - return length of a string
- *@s: string
- *Return: length of string
+ *_strlen_recursion - length of a string
+ *@s: pointer block of memory to fill
+ *Return: strlen_recursion
  */
 
 int _strlen_recursion(char *s)
 {
 
-int c;
-c = 0;
+/*Base condition*/
 if (*s == '\0')
-	return (0);
+return (0);
 
-c = 1 + _strlen_recursion(s+1);
-	return (c);
+else
+return (1 + _strlen_recursion(s + 1)); /*Sum 1*/
 }
