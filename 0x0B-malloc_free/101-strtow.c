@@ -1,74 +1,132 @@
+#include "main.h"
 #include <stdlib.h>
+#include <stdio.h>
+
 /**
- * wordCounterRec - count num of words recursively
- * @str: pointer to char
- * @i: current index
- * Return: number of words
- **/
-int wordCounterRec(char *str, int i)
+ * count_height - count height of the string matrix
+ * @str: input string
+ * Return: interger
+ */
+int count_height(char *str)
 {
-	if (str[i] == '\0')
-		return (0);
-	if (str[i] == ' ' && str[i + 1] != ' ' && str[i + 1] != '\0')
-		return (1 + wordCounterRec(str, i + 1));
-	return (wordCounterRec(str, i + 1));
+	int c_y = 0, c_x = 0, count = 0;
+
+	while (str[count] != '\0')
+	{
+		if (str[count] == ' ')
+		{
+			if (c_x > 0)
+				c_y++;
+			c_x = 0;
+		}
+		else
+		{
+			c_x++;
+		}
+		count++;
+	}
+	if (c_x > 0)
+		c_y++;
+	return (c_y);
 }
 /**
- * word_counter - counts number of words in 1d array of strings
- * @str: pointer to char
- * Return: number of words
- **/
-int word_counter(char *str)
+ * check_last - check for the last space needed to be allocated
+ * @s: input of arguments
+ * @c_x: input int size of row
+ * @c: input int count of row
+ * Return: pointer to pointer
+ */
+char **check_last(char **s, int c_x, int c)
 {
-	if (str[0] != ' ')
-		return (1 + wordCounterRec(str, 0));
-	return (wordCounterRec(str, 0));
+	if (c_x > 0)
+	{
+		c_x++;
+		s[c] = malloc(sizeof(char) * c_x);
+		if (s[c] == NULL)
+		{
+			while (c >= 0)
+			{
+				free(s[c]);
+				c--;
+			}
+			free(s);
+			return (NULL);
+		}
+		c++;
+	}
+	return (s);
+
 }
 /**
- * strtow - splits a string into words.
- * @str: string to be splitted
- * Return: pointer to an array of strings (words) or null
- **/
+ * assign - assign the values
+ * @str: count arguments
+ * @s: input of arguments
+ * Return: pointer to pointer
+ */
+char **assign(char *str, char **s)
+{
+	int counter = 0, c1 = 0, c2 = 0;
+
+	while (str[counter] != '\0')
+	{
+		if (str[counter] == ' ')
+		{
+			if (c2 > 0)
+				c1++;
+			c2 = 0;
+		}
+		else
+		{
+			s[c1][c2] = str[counter];
+			c2++;
+		}
+		counter++;
+	}
+	return (s);
+}
+/**
+ * strtow - store string in matrix
+ * @str: input string
+ * Return: matrix or null
+ */
 char **strtow(char *str)
 {
-	char **strDup;
-	int i, n, m, words;
+	char **s;
+	int c_y, c_x = 0, c = 0, count = 0;
 
-	if (str == NULL || str[0] == 0)
+	if (str == NULL)
 		return (NULL);
-	words = word_counter(str);
-	if (words < 1)
+	c_y = count_height(str) + 1;
+	if (c_y == 1)
 		return (NULL);
-	strDup = malloc(sizeof(char *) * (words + 1));
-	if (strDup == NULL)
-		return (NULL);
-	i = 0;
-	while (i < words && *str != '\0')
+	s = malloc(sizeof(char *) * c_y);
+	while (str[count] != '\0')
 	{
-		if (*str != ' ')
+		if (str[count] == ' ')
 		{
-			n = 0;
-			while (str[n] != ' ')
-				n++;
-			strDup[i] = malloc(sizeof(char) * (n + 1));
-			if (strDup[i] == NULL)
+			if (c_x > 0)
 			{
-				while (--i >= 0)
-					free(strDup[--i]);
-				free(strDup);
-				return (NULL);
+				c_x++;
+				s[c] = malloc(sizeof(char) * c_x);
+				if (s[c] == NULL)
+				{
+					while (c >= 0)
+					{
+						free(s[c]);
+						c--;
+					}
+					free(s);
+					return (NULL);
+				}
+				c++;
 			}
-			m = 0;
-			while (m < n)
-			{
-				strDup[i][m] = *str;
-				m++, str++;
-			}
-			strDup[i][m] = '\0';
-			i++;
+			c_x = 0;
 		}
-		str++;
+		else
+			c_x++;
+		count++;
 	}
-	strDup[i] = '\0';
-	return (strDup);
+	s = check_last(s, c_x, c);
+	return (assign(str, s));
 }
+
